@@ -1,0 +1,71 @@
+[project]
+name = "backend-flight-ia"
+version = "1.0.0"
+description = "API pour l'analyse des retards de vol avec Ray et FastAPI"
+requires-python = ">=3.11,<3.14"
+dependencies = [
+    "fastapi>=0.104.1",
+    "uvicorn[standard]>=0.24.0",
+    "sqlalchemy>=2.0.23",
+    "psycopg2-binary>=2.9.9",
+    "pydantic>=2.5.0",
+    "pydantic-settings>=2.1.0",
+    "python-multipart>=0.0.6",
+    "ray[default]>=2.9.1",
+    "pandas>=2.1.3",
+    "numpy>=1.26.2",
+    "plotly>=5.18.0",
+    "scikit-learn>=1.3.0",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["app"]
+
+[tool.ruff]
+target-version = "py311"
+line-length = 120
+src = ["app", "scripts"]
+exclude = [
+    ".venv",
+    "venv",
+    "data",
+    "models",
+    "dist",
+    "build",
+]
+
+[tool.ruff.lint]
+select = [
+    # Pyflakes
+    "F",
+    # Pycodestyle
+    "E", "W",
+    # isort
+    "I",
+    # flake8-bugbear
+    "B",
+    # flake8-comprehensions
+    "C4",
+    # flake8-import-conventions (lightweight import hygiene)
+    "ICN",
+]
+ignore = [
+    # Allow unused variables prefixed with underscore
+    "F841",
+]
+fixable = ["ALL"]
+unfixable = []
+
+[tool.ruff.lint.isort]
+known-first-party = ["app"]
+combine-as-imports = true
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+line-ending = "lf"
+skip-magic-trailing-comma = false

@@ -1,0 +1,23 @@
+# Fichiers et dossiers à ignorer pour Docker
+__pycache__
+*.pyc
+*.pyo
+*.pyd
+.Python
+*.so
+*.egg
+*.egg-info
+dist
+build
+.git
+.gitignore
+.env
+.env.local
+*.log
+.vscode
+.idea
+*.swp
+*.swo
+*~
+.DS_Store
+
