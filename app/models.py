@@ -59,3 +59,14 @@ class Airport(Base):
     latitude = Column(Float)
     longitude = Column(Float)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
+
+
+class FlightRoute(Base):
+    """Modèle pour stocker les routes de vol valides"""
+
+    __tablename__ = "flight_routes"
+
+    id = Column(Integer, primary_key=True, index=True)
+    origin_airport_iata = Column(String(3), index=True, nullable=False)
+    destination_airport_iata = Column(String(3), index=True, nullable=False)
+    created_at = Column(DateTime(timezone=True), server_default=func.now())

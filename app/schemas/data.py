@@ -9,6 +9,9 @@ class Airline(BaseModel):
     iata_code: str
     airline_name: str
 
+    class Config:
+        from_attributes = True
+
 
 class Airport(BaseModel):
     """Modèle pour les aéroports"""
@@ -21,3 +24,5 @@ class Airport(BaseModel):
     latitude: Optional[float] = None
     longitude: Optional[float] = None
 
+    class Config:
+        from_attributes = True

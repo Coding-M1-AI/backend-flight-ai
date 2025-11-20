@@ -25,7 +25,7 @@ from scripts.import_csv_to_db import main as import_csv_main
 from sqlalchemy import text
 
 from app.database import Base, engine
-from app.models import Airline, Airport
+from app.models import Airline, Airport, FlightRoute
 
 
 def check_database_connection():
@@ -62,7 +62,7 @@ def create_tables():
         print("Tables créées avec succès")
 
         # Lister les tables créées
-        tables = ["flight_data", "prediction_results", "airlines", "airports"]
+        tables = ["flight_data", "prediction_results", "airlines", "airports", "flight_routes"]
 
         print("Tables disponibles:")
         for table in tables:

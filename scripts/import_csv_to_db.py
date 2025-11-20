@@ -17,14 +17,13 @@ from pathlib import Path
 sys.path.append(str(Path(__file__).parent.parent))
 
 from app.database import SessionLocal
-from app.models import Airline, Airport
+from app.models import Airline, Airport, FlightRoute
 
 
 def import_airlines(session, csv_file_path: str):
     """Importer les données des compagnies aériennes"""
 
     if not os.path.exists(csv_file_path):
-
         print(f"Fichier {csv_file_path} non trouvé")
         return False
 
@@ -129,6 +128,59 @@ def import_airports(session, csv_file_path: str):
         return False
 
 
+def import_flight_routes(session, csv_file_path: str):
+    """Importer les routes de vol depuis flights.csv"""
+
+    if not os.path.exists(csv_file_path):
+        print(f"Fichier {csv_file_path} non trouvé")
+        return False
+
+    print(f"Import des routes de vol depuis {csv_file_path}")
+
+    # Vider la table existante
+    session.query(FlightRoute).delete()
+    session.commit()
+
+    imported_count = 0
+    routes = set()
+
+    def is_valid_iata(code):
+        """Vérifie si le code est un code IATA valide (3 lettres majuscules)"""
+        return code and len(code) == 3 and code.isalpha() and code.isupper()
+
+    try:
+        with open(csv_file_path, "r", encoding="utf-8") as file:
+            reader = csv.DictReader(file)
+
+            for row in reader:
+                origin = row.get("ORIGIN_AIRPORT")
+                destination = row.get("DESTINATION_AIRPORT")
+
+                if origin and destination:
+                    origin = origin.strip()
+                    destination = destination.strip()
+                    # Filtrer uniquement les codes IATA valides
+                    if is_valid_iata(origin) and is_valid_iata(destination):
+                        routes.add((origin, destination))
+
+            routes_to_add = [
+                FlightRoute(origin_airport_iata=origin, destination_airport_iata=dest) for origin, dest in routes
+            ]
+
+            if routes_to_add:
+                session.add_all(routes_to_add)
+                session.commit()
+                imported_count = len(routes_to_add)
+
+        print(f"{imported_count} routes de vol uniques importées")
+        return True
+
+    except Exception as e:
+        session.rollback()
+        print(f"Erreur lors de l'import des routes de vol: {e}")
+        return False
+
+
 def main():
     print("Import des données CSV vers la base de données...")
     print("=" * 60)
@@ -140,6 +192,7 @@ def main():
         # Chemins vers les fichiers CSV
         airlines_csv = "data/airlines.csv"
         airports_csv = "data/airports.csv"
+        flights_csv = "data/flights.csv"
 
         success = True
 
@@ -149,6 +202,10 @@ def main():
 
         # Import des aéroports
         if not import_airports(session, airports_csv):
+            success = False
+
+        # Import des routes de vol
+        if not import_flight_routes(session, flights_csv):
             success = False
 
         # Fermer la session
